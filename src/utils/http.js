@@ -1,27 +1,34 @@
 import axios from 'axios';
-import qs from 'qs'
-var http = axios.create();
-// 添加请求拦截器
-http.interceptors.request.use(function (config) {
-  // 在发送请求之前做些什么
-  // console.log(1111, config.data)
-  if (config.method === 'post' && !(config.data instanceof FormData)) {
-    config.data = qs.stringify(config.data)
+import qs from 'qs';
+
+/** **** 创建axios实例 ******/
+
+const http = axios.create({
+	baseURL:'',//将请求路径相同的前缀统一提取到baseURL属性内
+	timeout: 100000 // 请求超时时间
+})
+
+/** **** request拦截器==>对请求参数做处理 ******/
+
+http.interceptors.request.use(config => {
+ for (const key in config.data) {
+  if (config.data[key] === 'all') {
+   delete config.data[key]
   }
+ }
+ config.data = (config.data instanceof FormData) ? config.data : qs.stringify(config.data)
+ return config;
+}, error => { //请求错误处理
+ return Promise.reject(error)
+})
 
-  return config;
-}, function (error) {
-  // 对请求错误做些什么
-  return Promise.reject(error);
-});
+/****** respone拦截器==>对响应做处理 ******/
 
-// 添加响应拦截器
-http.interceptors.response.use(function (response) {
-  // 对响应数据做点什么
-  return response;
-}, function (error) {
-  // 对响应错误做点什么
-  return Promise.reject(error);
-});
-
+http.interceptors.response.use(response => {
+	return response.status === 200 ? response.data : response;
+},
+error => { //响应错误处理
+  return Promise.reject(error)
+ }
+);
 export default http;

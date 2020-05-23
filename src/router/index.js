@@ -8,12 +8,6 @@ const routes = [{
         component: Home
     },
     {
-        path: '/reg',
-        name: 'reg',
-        component: () =>
-            import ('../views/reg')
-    },
-    {
         path: '/login',
         name: 'login',
         component: () =>
@@ -21,8 +15,16 @@ const routes = [{
     }
 ]
 const router = new VueRouter({
+    linkActiveClass:"active",
     routes,
     mode: 'history'
 })
-
+router.beforeEach((to, from, next) => {
+  const { fullPath } = to
+  if (!sessionStorage.getItem("token") && fullPath !=="/login") {
+    next('/login')
+  } else {
+    next ()
+  }
+})
 export default router

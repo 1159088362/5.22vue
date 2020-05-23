@@ -9,14 +9,14 @@
       class="demo-ruleForm"
     >
       <el-form-item label="用户名" prop="username">
-        <el-input v-model.number="ruleForm.username"></el-input>
+        <el-input v-model="ruleForm.username"></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="pass">
-        <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+      <el-form-item label="密码" prop="password">
+        <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')" >登录</el-button>
-        <el-button @click="reg">注册</el-button>
+        <el-button>注册</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -46,22 +46,22 @@ export default {
     };
     return {
       ruleForm: {
-        pass: "",
+        password: "",
         username: "",
       },
       rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
+        password: [{ validator: validatePass, trigger: "blur" }],
         username: [{ validator: validatePass2, trigger: "blur" }],
       }
     };
   },
   computed: {
-    ...mapState(['Status']),
+    ...mapState('login',['Status']),
   },
   watch:{
     Status (){
       if(this.Status === 200){
-        localStorage.setItem('token',true)
+        sessionStorage.setItem('token',true)
         this.$message({
           message: '登录成功',
           type: 'success'
@@ -71,22 +71,16 @@ export default {
     }
   },
   methods: {
-     ...mapActions(['LOGIN_DATA_ACTION']),
+     ...mapActions('login',['FETCH_LOGIN']),
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this['LOGIN_DATA_ACTION'](this.ruleForm.username)
+          this['FETCH_LOGIN'](this.ruleForm)
         } else {
           return false;
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-    reg () {
-      this.$router.push('/regs')
-    }
   }
 };
 </script>

@@ -1,119 +1,71 @@
 <template>
- <div class="home">
-   <div class="ppp">
-     <div>
-     <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
-   </div>
-   <div class="search">
-     <el-input
-      v-model="searValue"
-      @blur="sear"
-      placeholder="请输入搜索内容"
-      prefix-icon="el-icon-search"
-     />
-   </div>
-   </div>
-    <el-table
-    :data="data"
-    border
-    align="center"
-    style="width: 100%">
-    <el-table-column
-      prop="id"
-      label="id"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="姓名"
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="msg"
-      label="密码">
-    </el-table-column>
-      <el-table-column label="操作">
-      <template slot-scope="scope">
-        <el-button
-          size="mini"
-          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-  <div>
-    <el-dialog title="添加" :visible.sync="dialogFormVisible">
-  <el-form :model="form">
-    <el-form-item label="姓名" :label-width="formLabelWidth">
-      <el-input v-model="form.name" autocomplete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="密码" :label-width="formLabelWidth">
-      <el-input v-model="form.msg" autocomplete="off"></el-input>
-    </el-form-item>
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addSure">确 定</el-button>
-  </div>
-</el-dialog>
-  </div>
- </div>
+  <el-container style="height: 100%; border: 1px solid #eee">
+    <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+      <el-menu :default-openeds="['1', '3']">
+        <el-submenu index="1">
+          <template slot="title"><i class="el-icon-message"></i>首页</template>
+        </el-submenu>
+        <el-submenu index="2">
+          <template slot="title"><i class="el-icon-menu"></i>基础管理</template>
+        </el-submenu>
+        <el-submenu index="3">
+          <template slot="title"><i class="el-icon-setting"></i>销售</template>
+        </el-submenu>
+        <el-submenu index="4">
+          <template slot="title"><i class="el-icon-setting"></i>进货</template>
+        </el-submenu>
+        <el-submenu index="5">
+          <template slot="title"><i class="el-icon-setting"></i>库存</template>
+        </el-submenu>
+        <el-submenu index="6">
+          <template slot="title"><i class="el-icon-setting"></i>系统管理</template>
+        </el-submenu>
+      </el-menu>
+    </el-aside>
+    <el-container>
+      <el-header style="text-align: right; font-size: 12px">
+        <el-dropdown>
+          <i class="el-icon-setting" style="margin-right: 15px"></i>
+            <el-dropdown-menu slot="dropdown"></el-dropdown-menu>
+        </el-dropdown>
+        <span>{{username}}</span>
+      </el-header>
+      <el-main>
+        <Button />
+        <Table />
+        <Form />
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
-<script>
-import './style.less'
-import { mapState, mapActions } from 'vuex'
-  export default {
-   data () {
-     return {
-        formLabelWidth: '120px',
-        dialogFormVisible:false,
-        judge:0,
-        searValue:'',
-        editId:'',
-        form: {
-          name: '',
-          msg: '',
-        },
-     }
-   },
-    created () {
-      this['DEFAULT_DATA_ACTION']()
-    },
-    computed: {
-       ...mapState(['data']),
-    },
-     methods: {
-       ...mapActions(['DEFAULT_DATA_ACTION','ADD_DATA_ACTION','DELETE_DATA_ACTION',
-       'SEAR_DATA_ACTION','EDIT_DATA_ACTION','ADD_DATA_ACTION']),
-      handleEdit(index, row) { //修改
-         this.dialogFormVisible = true;
-         this.form.name = row.name;
-         this.form.msg = row.msg;
-         this.editId = row.id;
-         this.judge = 1;
-        console.log(index, row);
-      },
-      handleDelete(index, row) { //删除
-        this['DELETE_DATA_ACTION'](row.id)
-      },
-      addSure(){
-        this.dialogFormVisible = false;
-         //添加
-        if(this.judge === 0){
-          this['ADD_DATA_ACTION'](this.form)
-        }else if(this.judge === 1){ //确定修改
-           this['EDIT_DATA_ACTION']({...this.form,id:this.editId})
-            window.history.go(0)
-        }
-      },
-      //搜索
-      sear(){
-        this['SEAR_DATA_ACTION'](this.searValue)
-      }
-    }
+
+<style>
+  .el-header {
+    background-color: #B3C0D1;
+    color: #333;
+    line-height: 60px;
   }
+  
+  .el-aside {
+    color: #333;
+  }
+</style>
+
+<script>
+import { mapState } from 'vuex'
+import Table from '../../components/Table'
+import Button from '../../components/Button'
+import Form from '../../components/Form'
+  export default {
+    computed: {
+      //获取登录的用户名
+    ...mapState('login',['username']),
+    },
+    components : {
+      Table,
+      Button,
+      Form
+    }
+  };
 </script>
