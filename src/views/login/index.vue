@@ -16,7 +16,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')" >登录</el-button>
-        <el-button>注册</el-button>
+        <el-button @click="close('ruleForm')">注册</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -81,6 +81,9 @@ export default {
         }
       });
     },
+    close (formName) {
+this.$refs[formName].resetFields();
+    }
   }
 };
 </script>

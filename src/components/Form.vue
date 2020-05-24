@@ -5,7 +5,7 @@
   :visible.sync="dialogFormVisible"
   :show-close=false 
   :close-on-click-modal=false>
-    <el-form :model="form = opt === null ? form : opt">
+    <el-form :model="form = opt === null ? form : opt" ref="ruleForm">
       <el-form-item label="供应商名称" :label-width="formLabelWidth" prop = 'supplierName'>
         <el-input v-model="form.supplierName" autocomplete="off"></el-input>
       </el-form-item>
@@ -56,12 +56,18 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'FETCH_SHOW'
+      'FETCH_SHOW',
+      'FETCH_EDIT',
     ]),
-    ...mapActions(['FETCH_ADD','FETCH_UPDATE']),
+    ...mapActions(['FETCH_ADD','FETCH_UPDATE','FETCH_LIST_DATA']),
   //取消操作
     close () {
       this['FETCH_SHOW'](0)
+      this['FETCH_LIST_DATA']()
+      for (const key in this.form) {
+        this.form[key]=""
+      }
+      this.form.status="1"
     },
   //确认添加
     add (context) {
